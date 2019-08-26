@@ -9,7 +9,14 @@ let users = %*[
 ]
 
 echo index_scf(users)
+# 公式テンプレートエンジンSCF
+# https://nnahito.com/articles/23
+# https://nim-lang.org/docs/filters.html
+
 echo index_nim_tmpl(users)
+# 3rd party 
+# https://github.com/onionhammer/nim-templates
+# https://github.com/onionhammer/nim-templates/blob/master/tests/templates_tests.nim
 
 
 echo users[1]["name"]
