@@ -3,5 +3,5 @@ RUN apk update && \
     apk upgrade --no-cache
 COPY ./src/jester/jester.nimble /home/www/jester
 RUN git config --global http.sslVerify false && \
-    nimble install -y jester
+    nimble install -y jester templates
 WORKDIR /home/www
