@@ -4,3 +4,5 @@
 
 docker/rdb/data/*
 !*Dockerfile
+*.pyc
+.vscode

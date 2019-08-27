@@ -9,8 +9,8 @@ services:
       - 9000:5000
     volumes:
       - ./src:/home/www
-    # depends_on:
-    #   - rdb
+    depends_on:
+      - rdb
   migrate:
     build:
       context: .
@@ -21,21 +21,22 @@ services:
       POSTGRES_DB: nim_sample
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_PORT: 15432
       TZ: Asia/Tokyo
     volumes:
       - ./migrate:/home/www
-  #   depends_on:
-  #     - rdb
-  # rdb:
-  #   image: postgres:alpine
-  #   tty: true
-  #   environment:
-  #     POSTGRES_DB: nim_sample
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #     TZ: Asia/Tokyo
-  #   ports:
-  #     - 5432:5432
-  #   volumes:
-  #     - ./docker/rdb/data:/var/lib/postgresql/data
-  #     - ./docker/rdb/initdb:/docker-entrypoint-initdb.d
+    depends_on:
+      - rdb
+  rdb:
+    image: postgres:alpine
+    tty: true
+    environment:
+      POSTGRES_DB: nim_sample
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      TZ: Asia/Tokyo
+    ports:
+      - 15432:5432
+    volumes:
+      # - .nim_data:/var/lib/postgresql/data
+      - ./docker/rdb/initdb:/docker-entrypoint-initdb.d
