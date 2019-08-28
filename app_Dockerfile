@@ -1,6 +1,7 @@
 FROM nimlang/nim:alpine
 RUN apk update && \
-    apk upgrade --no-cache
+    apk upgrade --no-cache && \
+    apk add --no-cache libpq
 COPY ./src/jester/jester.nimble /home/www/jester
 RUN git config --global http.sslVerify false && \
     nimble install -y jester templates

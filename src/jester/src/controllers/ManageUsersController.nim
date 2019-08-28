@@ -1,5 +1,8 @@
-from json import `%*`, `$`, `[]`, JsonNode, getStr
+from json import `%*`, `[]`, `$`, JsonNode, getStr
 from strutils import parseInt
+
+# service
+include ../services/domain_services/ManageUsersService
 
 # html
 include "../resources/templates/manage_users/index.nim"
@@ -7,12 +10,7 @@ include "../resources/templates/manage_users/create.tmpl"
 include "../resources/templates/manage_users/show.tmpl"
 
 proc index*(): string =
-  let users = %*[
-    {"id": 0, "name": "user0"},
-    {"id": 1, "name": "user1"},
-    {"id": 2, "name": "user2"}
-  ]
-
+  let users = ManageUsersService().index()
   return index_html(users)
 
 proc create*(): string =

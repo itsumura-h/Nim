@@ -11,9 +11,42 @@ class Command(BaseCommand):
     help = 'dataに配列を作ってね！app/fixtures/seed.jsonが出力されるよ！'
 
     def handle(self, *args, **options):
-        fake = Faker()
+        fake = Faker('ja')
 
-        data = {}
+        permission = [
+            {
+                'model': 'app.samplepermission',
+                'pk': 1,
+                'fields': {
+                    'permission': 'administrator'
+                }
+            },
+            {
+                'model': 'app.samplepermission',
+                'pk': 2,
+                'fields': {
+                    'permission': 'user'
+                }
+            },
+        ]
+
+        user = [
+            {
+                'model': 'app.sampleuser',
+                'pk': i,
+                'fields': {
+                    'name': f'user{i}',
+                    'email': f'user{i}@gmail.com',
+                    'password': make_password(f'Password{i}'),
+                    'permission': 1 if i % 2 == 0 else 2,
+                    'birth_date': fake.date_between(start_date='-60y', end_date='-20y').isoformat(),
+                    'created_at': str(datetime.now()),
+                    'updated_at': str(datetime.now())
+                }
+            } for i in range(1, 200)
+        ]
+
+        data = permission + user
 
         seeder_path = 'app/fixtures/seed.json'
         with open(seeder_path, 'w') as f:
