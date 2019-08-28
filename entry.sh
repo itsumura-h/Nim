@@ -1,4 +1,4 @@
 local_UID=$(id -u $USER)
-local_GIU=$(id -g $USER)
+local_GID=$(id -g $USER)
 
-sudo chown $(local_UID):$(local_GIU) * -R
+sudo chown $(local_UID):$(local_GID) * -R

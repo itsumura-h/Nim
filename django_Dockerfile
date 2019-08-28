@@ -1,9 +1,11 @@
 FROM python:alpine
+
 RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache gcc libc-dev openssl-dev postgresql-dev
 WORKDIR /home/www
-RUN pip install --upgrade --trusted-host=pypi.org --trusted-host=pypi.python.org --trusted-host=files.pythonhosted.org pip setuptools wheel && \
+RUN pip install --upgrade --trusted-host=pypi.org --trusted-host=pypi.python.org --trusted-host=files.pythonhosted.org \
+    pip setuptools wheel && \
     pip install --user --trusted-host=pypi.org --trusted-host=pypi.python.org --trusted-host=files.pythonhosted.org \
     django django-environ psycopg2-binary faker pylint
 ENV PATH $PATH:/root/.local/bin

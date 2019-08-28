@@ -1,4 +1,5 @@
 FROM nimlang/nim:alpine
+
 RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache libpq
