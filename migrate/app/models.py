@@ -7,11 +7,12 @@ class SamplePermission(models.Model):
     def __str__(self):
         return str(self.permission)
 
-    permission = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'sample_permissions'  # テーブル名
         verbose_name_plural = 'SamplePermissions'  # 複数形の時の名前
+
 # サンプルユーザー
 class SampleUser(models.Model):
     def __str__(self):
@@ -27,7 +28,7 @@ class SampleUser(models.Model):
 
     class Meta:
         db_table = 'sample_users'
-        verbose_name_plural = 'SampleUsers'    
+        verbose_name_plural = 'SampleUsers'
 
 
 

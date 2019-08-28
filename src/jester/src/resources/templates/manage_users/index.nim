@@ -6,9 +6,11 @@ proc index_html* (users: JsonNode): string = tmpli html"""
   <p><a href="/ManageUsers/create/">新規作成</a></p>
   <p><a href="/ManageUsers/1/">ユーザー1</a></p>
   <table border="1">
-    $for user in users{
+    $for user in users {
       <tr>
-        <td>$(user["id"])</td><td>$(user["name"].str)</td>
+        $for row in user {
+          <td>$(row.str)</td>
+        }
       </tr>
     }
   </table>

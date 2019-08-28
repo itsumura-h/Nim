@@ -18,14 +18,14 @@ class Command(BaseCommand):
                 'model': 'app.samplepermission',
                 'pk': 1,
                 'fields': {
-                    'permission': 'administrator'
+                    'name': 'administrator'
                 }
             },
             {
                 'model': 'app.samplepermission',
                 'pk': 2,
                 'fields': {
-                    'permission': 'user'
+                    'name': 'user'
                 }
             },
         ]
