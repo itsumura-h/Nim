@@ -6,13 +6,15 @@ from strutils import parseInt
 include ../services/domain_services/ManageUsersService
 
 # html
+include "../resources/templates/base.nim"
 include "../resources/templates/manage_users/index.nim"
 include "../resources/templates/manage_users/show.nim"
-include "../resources/templates/manage_users/create.nim"
+# include "../resources/templates/manage_users/create.nim"
+include ../resources/templates/manage_users/create
 
 proc index*(): string =
   let users = ManageUsersService().index()
-  return index_html(users)
+  return base_html(index_html(users))
 
 proc create*(): string =
   return create_html()
