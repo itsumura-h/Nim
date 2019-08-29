@@ -1,19 +1,29 @@
 from json import `%*`, `[]`, JsonNode
 import db_postgres
-import os
-import strutils
-import json
+
+from ORM import db
 
 type ManageUsersRepository* = ref object of RootObj
 
-proc db_conn(): DbConn =
-  let conn = open("rdb:5432","user","password","nim_sample")
-  return conn
-
 proc index*(this: ManageUsersRepository): JsonNode =
-  let db = db_conn()
-  let users = db.getAllRows(
+  let users = db().getAllRows(
     sql"select * from sample_users"
   )
 
   return %*users # seqをJsonNodeに変換
+
+proc show*(this: ManageUsersRepository, id: int): JsonNode =
+  let user = db().getRow(
+    sql"select * from sample_users where id = ?",
+    id
+  )
+  echo user
+  return %*{
+    "id": user[0],
+    "name": user[1],
+    "email": user[2],
+    "password": user[3],
+    "birth_date": user[4],
+    "created_at": user[5],
+    "updated_at": user[6]
+  }
