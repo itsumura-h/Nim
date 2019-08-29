@@ -1,3 +1,4 @@
+import jester
 from json import `%*`, `[]`, `$`, JsonNode, getStr
 from strutils import parseInt
 
@@ -6,8 +7,8 @@ include ../services/domain_services/ManageUsersService
 
 # html
 include "../resources/templates/manage_users/index.nim"
-include "../resources/templates/manage_users/create.tmpl"
-include "../resources/templates/manage_users/show.tmpl"
+include "../resources/templates/manage_users/show.nim"
+include "../resources/templates/manage_users/create.nim"
 
 proc index*(): string =
   let users = ManageUsersService().index()
@@ -16,10 +17,20 @@ proc index*(): string =
 proc create*(): string =
   return create_html()
 
-proc show*(): string =
-  return show_html()
+proc store*(request: Request): string =
+  var params = request.params
+  # echo params
+  echo params["name"]
+  echo params["email"]
+  echo params["birth_date"]
+  return ""
 
-proc update*(id: string): string =
-  let new_id = id.parseInt
-  var data = %*{"id": new_id}
+proc show*(str_id: string): string =
+  let id = str_id.parseInt
+  let user = ManageUsersService().show(id)
+  return show_html(user)
+
+proc update*(str_id: string): string =
+  let id = str_id.parseInt
+  var data = %*{"id": id}
   return $data

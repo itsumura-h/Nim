@@ -26,8 +26,10 @@ routes:
     resp ManageUsersController.index()
   get "/ManageUsers/create/":
     resp ManageUsersController.create()
+  post "/ManageUsers/":
+    resp ManageUsersController.store(request)
   get "/ManageUsers/@id/":
-    resp ManageUsersController.show()
+    resp ManageUsersController.show(@"id")
   put "/ManageUsers/@id/":
     resp ManageUsersController.update(@"id"), "application/json"
 
