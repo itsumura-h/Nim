@@ -6,10 +6,9 @@ from strutils import parseInt
 include ../services/domain_services/ManageUsersService
 
 # html
-include "../resources/templates/base.nim"
-include "../resources/templates/manage_users/index.nim"
-include "../resources/templates/manage_users/show.nim"
-# include "../resources/templates/manage_users/create.nim"
+include ../resources/templates/base
+include ../resources/templates/manage_users/index
+include ../resources/templates/manage_users/show
 include ../resources/templates/manage_users/create
 
 proc index*(): string =

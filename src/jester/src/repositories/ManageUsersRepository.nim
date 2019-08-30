@@ -9,7 +9,6 @@ proc index*(this: ManageUsersRepository): JsonNode =
   let users = db().getAllRows(
     sql"select * from sample_users"
   )
-
   return %*users # seqをJsonNodeに変換
 
 proc show*(this: ManageUsersRepository, id: int): JsonNode =
