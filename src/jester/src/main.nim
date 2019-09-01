@@ -1,18 +1,27 @@
-import jester, asyncdispatch, httpcore, strutils, re, json
+import jester, asyncdispatch, httpcore, strutils, re, json, sugar
 from controllers/SampleController import SampleController
 from controllers/ManageUsersController import ManageUsersController
 
-# proc setHeaders(request: Request, headers: StringTableRef) =
-proc setHeaders(request: Request, headers: HttpHeaders) =
-  headers["Cache-Control"] = "no-cache"
-  headers["Access-Control-Allow-Origin"] = "*"
-  headers["Access-Control-Allow-Methods"] = "OPTIONS, GET, POST, DELETE, PATCH"
-  let values: HttpHeaderValues = request.headers.getOrDefault("Access-Control-Request-Headers")
-  headers["Access-Control-Allow-Headers"] = join(seq[string](values), ", ")
 
+proc setNewHeaders(request: Request): seq =
+  var headers = @[
+    ("Cache-Control", "no-cache"),
+    ("Access-Control-Allow-Origin", "*"),
+    ("Access-Control-Allow-Methods", "OPTIONS, GET, POST, DELETE, PATCH")
+  ]
 
-# router main_router:
+  var allowedHeaders = @[
+    "X-login-id",
+    "X-login-token"
+    ]
+  if allowedHeaders.len() > 0:
+    var strAllowedHeaders = allowedHeaders.join(", ")
+    headers.add(("Access-Control-Allow-Headers", strAllowedHeaders))
+  return headers
+
 routes:
+  options re".*":
+    let newHeaders = setNewHeaders(request); resp Http200, newHeaders, ""
   # Sample
   get "/sample/":
     resp SampleController.index()
@@ -20,8 +29,6 @@ routes:
     resp SampleController.fib(@"num"), "application/json"
   
   # ManageUsers
-  options re"ManageUsers":
-    request.setHeaders(request.headers); resp ""
   get "/ManageUsers/":
     resp ManageUsersController.index()
   get "/ManageUsers/create/":

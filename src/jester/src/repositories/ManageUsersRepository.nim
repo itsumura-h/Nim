@@ -1,4 +1,4 @@
-from json import `%*`, `[]`, JsonNode
+import json
 import db_postgres
 
 from ORM import db
@@ -9,7 +9,18 @@ proc index*(this: ManageUsersRepository): JsonNode =
   let users = db().getAllRows(
     sql"select * from sample_users"
   )
-  return %*users # seqをJsonNodeに変換
+  var json_users = %*[]
+  for user in users:
+    json_users.add(%*{
+      "id": user[0],
+      "name": user[1],
+      "email": user[2],
+      "birth_date": user[4],
+      "created_at": user[5],
+      "updated_at": user[6]
+    })
+  return %*json_users
+
 
 proc show*(this: ManageUsersRepository, id: int): JsonNode =
   let user = db().getRow(
