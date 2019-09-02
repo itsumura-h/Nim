@@ -10,7 +10,7 @@ proc index*(): string =
   # return "hello"
   return index_html()
 
-proc fib*(num: string): string =
+proc fib*(num: string): JsonNode =
   let new_num = num.parseInt
   let data = SampleService().fib(new_num)
-  return $data # $…JsonNodeを文字列にする
+  return data

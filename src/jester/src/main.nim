@@ -1,32 +1,17 @@
-import jester, asyncdispatch, httpcore, strutils, re, json, sugar
+import jester, asyncdispatch, httpcore, strutils, re, json, sugar, tables
+from middleware import middleware
 from controllers/SampleController import SampleController
 from controllers/ManageUsersController import ManageUsersController
 
 
-proc setNewHeaders(request: Request): seq =
-  var headers = @[
-    ("Cache-Control", "no-cache"),
-    ("Access-Control-Allow-Origin", "*"),
-    ("Access-Control-Allow-Methods", "OPTIONS, GET, POST, DELETE, PATCH")
-  ]
-
-  var allowedHeaders = @[
-    "X-login-id",
-    "X-login-token"
-    ]
-  if allowedHeaders.len() > 0:
-    var strAllowedHeaders = allowedHeaders.join(", ")
-    headers.add(("Access-Control-Allow-Headers", strAllowedHeaders))
-  return headers
-
 routes:
   options re".*":
-    let newHeaders = setNewHeaders(request); resp Http200, newHeaders, ""
+    resp Http200, middleware.setNewHeaders(request), ""
   # Sample
   get "/sample/":
-    resp SampleController.index()
+    resp Http200, middleware.setNewHeaders(request), SampleController.index()
   get "/sample/fib/@num/":
-    resp SampleController.fib(@"num"), "application/json"
+    resp SampleController.fib(@"num")
   
   # ManageUsers
   get "/ManageUsers/":
