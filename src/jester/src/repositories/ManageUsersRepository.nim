@@ -27,7 +27,6 @@ proc show*(this: ManageUsersRepository, id: int): JsonNode =
     sql"select * from sample_users where id = ?",
     id
   )
-  echo user
   return %*{
     "id": user[0],
     "name": user[1],

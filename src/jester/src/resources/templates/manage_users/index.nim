@@ -11,7 +11,17 @@ proc index_html*(header: string, users: string): string = tmpli html"""
       :items="users"
       :items-per-page="10"
       class="elevation-1"
-    ></v-data-table>
+    >
+    <template v-slot:item.action="{ item }">
+      <v-icon
+        small
+        class="mr-2"
+        @click="editItem(item)"
+      >
+        edit
+      </v-icon>
+    </template>
+    </v-data-table>
   </v-app>
 </div>
 <script>
@@ -22,6 +32,11 @@ proc index_html*(header: string, users: string): string = tmpli html"""
       return {
         headers: JSON.parse('$(header)'),
         users: JSON.parse('$(users)')
+      }
+    },
+    methods: {
+      editItem: function (item) {
+        location.href = '/ManageUsers/' + item.id + '/'
       }
     }
   })

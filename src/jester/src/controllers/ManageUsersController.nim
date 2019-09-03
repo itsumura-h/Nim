@@ -20,7 +20,8 @@ proc index*(): string =
     %*{"text": "email", "value": "email"},
     %*{"text": "birth_date", "value": "birth_date"},
     %*{"text": "created_at", "value": "created_at"},
-    %*{"text": "updated_at", "value": "updated_at"}
+    %*{"text": "updated_at", "value": "updated_at"},
+    %*{"text": "action", "value": "action"}
   ]
 
   return base_html(index_html(header, str_users))
