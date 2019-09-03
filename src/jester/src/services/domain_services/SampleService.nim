@@ -1,6 +1,4 @@
-from json import `%*`, JsonNode
-from strformat import `&`
-import times
+import json, strformat, times
 include ../ApplicationService
 
 type SampleService* = ref object of RootObj
@@ -15,7 +13,7 @@ proc fib*(this: SampleService, num: int): JsonNode =
 
   var data = %*{ # %…配列をJsonNodeにする
     "version": "Nim " & NimVersion,
-    "time": &"{end_time.seconds}.{end_time.microseconds}",
+    "time": &"{end_time.inSeconds}.{end_time.inMicroseconds}",
     "fib": results
   }
   return data
