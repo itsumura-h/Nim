@@ -11,7 +11,7 @@ routes:
   get "/sample/":
     resp Http200, middleware.setNewHeaders(request), SampleController.index()
   get "/sample/fib/@num/":
-    resp SampleController.fib(@"num")
+    resp Http200, middleware.setNewHeadersJson(request), $SampleController.fib(@"num")
   
   # ManageUsers
   get "/ManageUsers/":
