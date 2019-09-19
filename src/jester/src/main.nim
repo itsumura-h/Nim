@@ -1,29 +1,37 @@
-import jester, asyncdispatch, httpcore, strutils, re, json, sugar, tables
-from middleware import middleware
+import busker, asyncdispatch, httpcore, strutils, re, json, sugar, tables
+from conf/middlewares import middleware
+from conf/customHeaders import corsHeader
 from controllers/SampleController import SampleController
 from controllers/ManageUsersController import ManageUsersController
+
+router manageUsers:
+  get "":
+    stringResponse(ManageUsersController.index())
+  get "/create":
+    stringResponse(ManageUsersController.create())
+  post "":
+    stringResponse(ManageUsersController.store(request))
+  get "/@id":
+    stringResponse(ManageUsersController.show(@"id"))
+  put "/@id":
+    jsonResponse(ManageUsersController.update(@"id"))
+
+router sample:
+  get "":
+    middleware(request); stringResponse(SampleController.index(), corsHeader(request))
+  get "/fib/@num":
+    middleware(request); jsonResponse(SampleController.fib(@"num"), corsHeader(request))
 
 
 routes:
   options re".*":
-    resp Http200, middleware.setNewHeaders(request), ""
+    stringResponse("", corsHeader(request))
   # Sample
-  get "/sample/":
-    resp Http200, middleware.setNewHeaders(request), SampleController.index()
-  get "/sample/fib/@num/":
-    resp Http200, middleware.setNewHeadersJson(request), $SampleController.fib(@"num")
+  extend sample, "/sample"
   
   # ManageUsers
-  get "/ManageUsers/":
-    resp ManageUsersController.index()
-  get "/ManageUsers/create/":
-    resp ManageUsersController.create()
-  post "/ManageUsers/":
-    resp ManageUsersController.store(request)
-  get "/ManageUsers/@id/":
-    resp ManageUsersController.show(@"id")
-  put "/ManageUsers/@id/":
-    resp ManageUsersController.update(@"id"), "application/json"
+  extend manageUsers, "/ManageUsers"
+
 
 
 runForever()
