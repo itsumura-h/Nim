@@ -46,7 +46,7 @@ proc show*(str_id: string): string =
   return show_html(user)
 
 
-proc update*(str_id: string): string =
+proc update*(str_id: string): JsonNode =
   let id = str_id.parseInt
   var data = %*{"id": id}
-  return $data
+  return data

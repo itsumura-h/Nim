@@ -6,3 +6,4 @@ docker/rdb/data/*
 !*Dockerfile
 *.pyc
 .vscode
+*.sqlite3

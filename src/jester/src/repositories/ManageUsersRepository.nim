@@ -1,7 +1,7 @@
 import json
-import db_postgres
+import db_sqlite
 
-from ORM import db
+from ../conf/database import db
 
 type ManageUsersRepository* = ref object of RootObj
 
