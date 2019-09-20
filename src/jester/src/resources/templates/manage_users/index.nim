@@ -3,7 +3,8 @@ import json
 
 proc index_html*(header: string, users: string): string = tmpli html"""
 <h1>ManageUsers index</h1>
-<p><a href="/ManageUsers/create">新規作成</a></p>
+<p><a href="../">戻る</a></p>
+<p><a href="/ManageUsers/create/">新規作成</a></p>
 <div id="app">
   <v-app>
     <v-data-table
@@ -16,7 +17,7 @@ proc index_html*(header: string, users: string): string = tmpli html"""
       <v-icon
         small
         class="mr-2"
-        @click="editItem(item)"
+        @click="showItem(item)"
       >
         edit
       </v-icon>
@@ -35,8 +36,8 @@ proc index_html*(header: string, users: string): string = tmpli html"""
       }
     },
     methods: {
-      editItem: function (item) {
-        location.href = '/ManageUsers/' + item.id
+      showItem: function (item) {
+        location.href = '/ManageUsers/' + item.id + '/'
       }
     }
   })

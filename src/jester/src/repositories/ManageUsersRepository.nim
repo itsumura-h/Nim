@@ -10,7 +10,6 @@ proc index*(this: ManageUsersRepository): JsonNode =
     sql"select * from users"
   )
   var usersJson = %[]
-  echo users[0]
   for user in users:
     usersJson.add(%*{
       "id": user[0],
@@ -22,7 +21,7 @@ proc index*(this: ManageUsersRepository): JsonNode =
       "created_at": user[8],
       "updated_at": user[9]
     })
-  return %*usersJson
+  return usersJson
 
 
 proc show*(this: ManageUsersRepository, id: int): JsonNode =
