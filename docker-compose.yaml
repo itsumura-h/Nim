@@ -9,24 +9,17 @@ services:
       - 9000:5000
     volumes:
       - ./src:/home/www
+      - ./docker/rdb/data:/home/db
     # depends_on:
     #   - rdb
-  # migrate:
-  #   build:
-  #     context: .
-  #     dockerfile: django_Dockerfile
-  #   tty: true
-  #   environment:
-  #     DB_HOST: rdb
-  #     POSTGRES_DB: nim_sample
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_PORT: 5432
-  #     TZ: Asia/Tokyo
-  #   volumes:
-  #     - ./migrate:/home/www
-  #   depends_on:
-  #     - rdb
+  migrate:
+    build:
+      context: .
+      dockerfile: python_Dockerfile
+    tty: true
+    volumes:
+      - ./migrate:/home/www
+      - ./docker/rdb/data:/home/db
   # rdb:
   #   image: postgres:alpine
   #   tty: true
