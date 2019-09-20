@@ -7,32 +7,36 @@ type ManageUsersRepository* = ref object of RootObj
 
 proc index*(this: ManageUsersRepository): JsonNode =
   let users = db().getAllRows(
-    sql"select * from sample_users"
+    sql"select * from users"
   )
-  var json_users = %*[]
+  var usersJson = %[]
+  echo users[0]
   for user in users:
-    json_users.add(%*{
+    usersJson.add(%*{
       "id": user[0],
       "name": user[1],
       "email": user[2],
-      "birth_date": user[4],
-      "created_at": user[5],
-      "updated_at": user[6]
+      "address": user[3],
+      "birth_date": user[6],
+      "auth": user[7],
+      "created_at": user[8],
+      "updated_at": user[9]
     })
-  return %*json_users
+  return %*usersJson
 
 
 proc show*(this: ManageUsersRepository, id: int): JsonNode =
   let user = db().getRow(
-    sql"select * from sample_users where id = ?",
+    sql"select * from users where id = ?",
     id
   )
   return %*{
     "id": user[0],
     "name": user[1],
     "email": user[2],
-    "password": user[3],
-    "birth_date": user[4],
-    "created_at": user[5],
-    "updated_at": user[6]
+    "address": user[3],
+    "birth_date": user[6],
+    "auth": user[7],
+    "created_at": user[8],
+    "updated_at": user[9]
   }

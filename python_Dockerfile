@@ -2,10 +2,10 @@ FROM python:alpine
 
 RUN apk update && \
     apk upgrade --no-cache && \
-    apk add --no-cache gcc libc-dev openssl-dev postgresql-dev sqlite
+    apk add --no-cache gcc libc-dev openssl-dev postgresql-dev libffi-dev sqlite
+ENV PATH $PATH:/root/.local/bin
 WORKDIR /home/www
 RUN pip install --upgrade --trusted-host=pypi.org --trusted-host=pypi.python.org --trusted-host=files.pythonhosted.org \
     pip setuptools wheel && \
     pip install --user --trusted-host=pypi.org --trusted-host=pypi.python.org --trusted-host=files.pythonhosted.org \
-    orator
-ENV PATH $PATH:/root/.local/bin
+    orator faker bcrypt pylint pyformat tqdm

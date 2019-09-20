@@ -7,14 +7,14 @@ template jsonResponse*(response: JsonNode) =
     let e = getCurrentExceptionMsg()
     resp Http500, e
 
-template jsonResponse*(response: JsonNode, argHeaders: openArray[tuple[key, value: string]]) =
-  var newHeaders = argHeaders
-  newHeaders.add(("Content-Type", "application/json"))
+template jsonResponse*(response: JsonNode, headersArg: openArray[tuple[key, value: string]]) =
+  var headers = headersArg
+  headers.add(("Content-Type", "application/json"))
   try:
-    resp Http200, newHeaders, $response
+    resp Http200, headers, $response
   except:
     let e = getCurrentExceptionMsg()
-    resp Http500, newHeaders, e
+    resp Http500, headers, e
 
 template stringResponse*(response: string) =
   try:

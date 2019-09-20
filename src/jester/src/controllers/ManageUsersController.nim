@@ -3,7 +3,8 @@ import json
 from strutils import parseInt
 
 # service
-include ../services/domain_services/ManageUsersService
+# include ../services/domain_services/ManageUsersService
+import ../services/domain_services/ManageUsersService
 
 # html
 include ../resources/templates/base
