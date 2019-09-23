@@ -1,8 +1,8 @@
 FROM python:alpine
 
 RUN apk update && \
-    apk upgrade --no-cache && \
-    apk add --no-cache gcc libc-dev openssl-dev postgresql-dev libffi-dev sqlite
+    apk upgrade --no-cache
+RUN apk add --no-cache gcc libc-dev openssl-dev postgresql-dev libffi-dev sqlite
 ENV PATH $PATH:/root/.local/bin
 WORKDIR /home/www
 RUN pip install --upgrade --trusted-host=pypi.org --trusted-host=pypi.python.org --trusted-host=files.pythonhosted.org \
