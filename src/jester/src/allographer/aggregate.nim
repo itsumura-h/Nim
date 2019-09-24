@@ -58,7 +58,7 @@ proc generateCountSQL(queryArgs: JsonNode): string =
 
   return queryString
 
-proc countOne*(queryArgs: JsonNode, db: proc): int =
+proc count*(queryArgs: JsonNode, db: proc): int =
   var queryString = generateCountSQL(queryArgs)
   try:
     echo queryString
@@ -66,7 +66,7 @@ proc countOne*(queryArgs: JsonNode, db: proc): int =
   except:
     result = 0
 
-proc countRows*(queryArgs: JsonNode, db: proc): seq =
+proc countColumns*(queryArgs: JsonNode, db: proc): seq =
   var queryString = generateCountSQL(queryArgs)
   try:
     echo queryString

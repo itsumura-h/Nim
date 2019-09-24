@@ -9,13 +9,13 @@ class User(Migration):
         """
         with self.schema.create('users') as table:
             table.increments('id')
-            table.string('name', 255)
-            table.string('email', 255)
-            table.string('address', 255)
-            table.string('password', 255)
-            table.string('password_salt', 255)
-            table.date('birth_date')
-            table.integer('auth_id').unsigned()
+            table.string('name', 255).nullable().default()
+            table.string('email', 255).nullable().default()
+            table.string('address', 255).nullable().default()
+            table.string('password', 255).nullable().default()
+            table.string('password_salt', 255).nullable().default()
+            table.date('birth_date').nullable().default()
+            table.integer('auth_id').unsigned().nullable().default()
             table.foreign('auth_id').references('id').on('auth')
             table.nullable_timestamps()
 
