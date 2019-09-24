@@ -1,21 +1,22 @@
 import db_sqlite, db_mysql, db_postgres, json
 from strformat import `&`
-from strutils import contains
+import sqlBuilder
 
 
-proc select*(queryArgs: JsonNode, columnsArgs: varargs[string]): JsonNode =
-  var query = queryArgs
 
-  if columnsArgs.len == 0:
+proc select*(queryArg: JsonNode, columnsArg: varargs[string]): JsonNode =
+  var query = queryArg
+
+  if columnsArg.len == 0:
     query["select"] = %["*"]
   else:
-    query["select"] = %*columnsArgs
+    query["select"] = %*columnsArg
   
   return query
 
 
-proc where*(queryArgs: JsonNode, column: string, symbol: string, value: string): JsonNode =
-  var query = queryArgs
+proc where*(queryArg: JsonNode, column: string, symbol: string, value: string): JsonNode =
+  var query = queryArg
 
   if query.hasKey("where") == false:
     query["where"] = %*[{
@@ -35,8 +36,8 @@ proc where*(queryArgs: JsonNode, column: string, symbol: string, value: string):
   return query
 
 
-proc where*(queryArgs: JsonNode, column: string, symbol: string, value: int): JsonNode =
-  var query = queryArgs
+proc where*(queryArg: JsonNode, column: string, symbol: string, value: int): JsonNode =
+  var query = queryArg
 
   if query.hasKey("where") == false:
     query["where"] = %*[{
@@ -56,8 +57,8 @@ proc where*(queryArgs: JsonNode, column: string, symbol: string, value: int): Js
   return query
 
 
-proc orWhere*(queryArgs: JsonNode, column: string, symbol: string, value: string): JsonNode =
-  var query = queryArgs
+proc orWhere*(queryArg: JsonNode, column: string, symbol: string, value: string): JsonNode =
+  var query = queryArg
 
   if query.hasKey("or_where") == false:
     query["or_where"] = %*[{
@@ -77,8 +78,8 @@ proc orWhere*(queryArgs: JsonNode, column: string, symbol: string, value: string
   return query
 
 
-proc orWhere*(queryArgs: JsonNode, column: string, symbol: string, value: int): JsonNode =
-  var query = queryArgs
+proc orWhere*(queryArg: JsonNode, column: string, symbol: string, value: int): JsonNode =
+  var query = queryArg
 
   if query.hasKey("or_where") == false:
     query["or_where"] = %*[{
@@ -97,12 +98,13 @@ proc orWhere*(queryArgs: JsonNode, column: string, symbol: string, value: int): 
 
   return query
 
-proc join*(queryArgs: JsonNode,
+
+proc join*(queryArg: JsonNode,
             table: string, 
             column1: string, 
             symbol: string, 
             column2: string): JsonNode =
-  var query = queryArgs
+  var query = queryArg
 
   if query.hasKey("join") == false:
     query["join"] = %*[{
@@ -124,14 +126,14 @@ proc join*(queryArgs: JsonNode,
   return query
 
 
-proc offset*(queryArgs: JsonNode, num: int): JsonNode =
-  var query = queryArgs
+proc offset*(queryArg: JsonNode, num: int): JsonNode =
+  var query = queryArg
   query["offset"] = %num
   return query
 
 
-proc limit*(queryArgs: JsonNode, num: int): JsonNode =
-  var query = queryArgs
+proc limit*(queryArg: JsonNode, num: int): JsonNode =
+  var query = queryArg
   query["limit"] = %num
   return query
 
@@ -140,79 +142,22 @@ proc limit*(queryArgs: JsonNode, num: int): JsonNode =
 # Generate SQL
 # ======================================================================
 
-proc generateSelectSQL(queryArgs: JsonNode): string =
-  var query = queryArgs
-  var queryString = ""
-
-  queryString.add("SELECT")
-
-  # ========== select ==========
-  if query.hasKey("select"):
-    for i, item in query["select"].getElems():
-      if i > 0:
-        queryString.add(",")
-
-      queryString.add(&" {item.getStr()}")
-  else:
-    queryString.add(&" *")
-
-  # ========== from ==========
-  var table = query["table"].getStr()
-  queryString.add(&" FROM {table}")
-
-  # ========== join ==========
-  if query.hasKey("join"):
-    for row in query["join"]:
-      var table = row["table"].getStr()
-      var column1 = row["column1"].getStr()
-      var symbol = row["symbol"].getStr()
-      var column2 = row["column2"].getStr()
-
-      queryString.add(&" JOIN {table} ON {column1} {symbol} {column2}")
-
-  # ========== where ==========
-  if query.hasKey("where"):
-    for i, row in query["where"].getElems():
-      var column = row["column"].getStr()
-      var symbol = row["symbol"].getStr()
-      var value = row["value"]
-      
-      if i == 0:
-        queryString.add(&" WHERE {column} {symbol} {value}")
-      else:
-        queryString.add(&" AND {column} {symbol} {value}")
-
-  # ========== or where ==========
-  if query.hasKey("or_where"):
-    for row in query["or_where"]:
-      var column = row["column"].getStr()
-      var symbol = row["symbol"].getStr()
-      var value = row["value"]
-      
-      if queryString.contains("WHERE"):
-        queryString.add(&" OR {column} {symbol} {value}")
-      else:
-        queryString.add(&" WHERE {column} {symbol} {value}")
-
-  # ========== limit ==========
-  if query.hasKey("limit"):
-    var num = query["limit"].getInt()
-    queryString.add(&" LIMIT {num}")
-
-  # ========== offset ==========
-  if query.hasKey("offset"):
-    var num = query["offset"].getInt()
-    queryString.add(&" OFFSET {num}")
-
-  return queryString
-
-proc getSqlCheck*(queryArgs: JsonNode) =
-  var queryString = generateSelectSQL(queryArgs)
-  echo queryString
+proc generateSelectSql(queryArg: JsonNode): string =
+  return selectSql(queryArg)
+        .fromSql(queryArg)
+        .joinSql(queryArg)
+        .whereSql(queryArg)
+        .orWhereSql(queryArg)
+        .limitSql(queryArg)
+        .offsetSql(queryArg)
 
 
-proc get*(queryArgs: JsonNode, db: proc): seq =
-  var queryString = generateSelectSQL(queryArgs)
+proc getSqlCheck*(queryArg: JsonNode) =
+  echo generateSelectSql(queryArg)
+
+
+proc get*(queryArg: JsonNode, db: proc): seq =
+  let queryString = generateSelectSql(queryArg)
 
   try:
     echo queryString
@@ -223,8 +168,9 @@ proc get*(queryArgs: JsonNode, db: proc): seq =
 
   db().close()
 
-proc first*(queryArgs: JsonNode, db: proc): seq =
-  var queryString = generateSelectSQL(queryArgs)
+
+proc first*(queryArg: JsonNode, db: proc): seq =
+  let queryString = generateSelectSql(queryArg)
 
   try:
     echo queryString
@@ -234,23 +180,12 @@ proc first*(queryArgs: JsonNode, db: proc): seq =
 
   db().close()
 
-proc find*(queryArgs: JsonNode, id: int, db: proc): seq =
-  let query = queryArgs
 
-  var table = query["table"].getStr()
+proc find*(queryArg: JsonNode, id: int, db: proc): seq =
+  var queryString = selectSql(queryArg)
+                    .fromSql(queryArg)
 
-  # ========== select ==========
-  var select = ""
-  if query.hasKey("select") == false:
-    select = " *"
-  else:
-    for i, item in query["select"].getElems():
-      if i > 0:
-        select.add(",")
-
-      select.add(&" {item.getStr()}")
-
-  let queryString = &"SELECT{select} FROM {table} WHERE id = {$id}"
+  queryString.add(&" WHERE id = {$id}")
 
   try:
     echo queryString

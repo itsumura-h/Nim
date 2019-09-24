@@ -1,8 +1,10 @@
 import db_sqlite, db_mysql, db_postgres, json
 from strformat import `&`
 
-proc insert*(queryArgs: JsonNode, items: JsonNode, db: proc) =
-  var query = queryArgs
+
+
+proc insert*(queryArg: JsonNode, items: JsonNode, db: proc) =
+  var query = queryArg
   var queryString = ""
   let table = query["table"].getStr()
   var columns = ""
@@ -25,8 +27,8 @@ proc insert*(queryArgs: JsonNode, items: JsonNode, db: proc) =
   db().close()
 
 
-proc insert*(queryArgs: JsonNode, rows: openArray, db: proc) =
-  var query = queryArgs
+proc insert*(queryArg: JsonNode, rows: openArray, db: proc) =
+  var query = queryArg
   let table = query["table"].getStr()
 
   for items in rows:

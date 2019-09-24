@@ -51,7 +51,6 @@ echo resultRow
 
 echo ""
 
-table("users").select("name", "address").where("name", "LIKE", "%20").getSqlCheck()
 echo table("users").select("name", "address").where("name", "LIKE", "%20").countColumns(db)
 echo table("users").select().where("name", "LIKE", "%20").count(db)
 
@@ -62,10 +61,20 @@ table("users").insert(%*{"name": "John", "email": "John@gmail.com"}, db)
 echo ""
 
 table("users").insert(
-  @[
+  [
     %*{"name": "John", "email": "John@gmail.com", "address": "ロンドン"},
     %*{"name": "Paul", "email": "Paul@gmail.com", "address": "ロンドン"},
     %*{"email": "George@yahoo.co.jp", "birth_date": "1990-1-1", "address": "ロンドン"}
   ],
   db
 )
+
+echo ""
+
+echo table("users").where("address", "=", "ロンドン").get(db)
+table("users").where("address", "=", "ロンドン").delete(db)
+echo table("users").where("address", "=", "ロンドン").get(db)
+
+echo ""
+
+table("users").delete(1, db)

@@ -2,7 +2,7 @@ FROM nimlang/nim:alpine
 
 RUN apk update && \
     apk upgrade --no-cache && \
-    apk add --no-cache libpq ca-certificates openssl sqlite && \
+    apk add --no-cache libpq ca-certificates openssl sqlite pcre && \
     update-ca-certificates
 COPY ./src/jester/jester.nimble /home/www/jester
 RUN git config --global http.sslVerify false && \
