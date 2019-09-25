@@ -7,7 +7,10 @@ from strutils import contains
 # ==================================================
 # SELECT
 # ==================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
 proc selectSql*(queryArg: JsonNode): string =
   var query = queryArg
   var queryString = ""
@@ -131,7 +134,10 @@ proc offsetSql*(queryStringArg: string, queryArg: JsonNode): string =
 # ==================================================
 # UPDATE
 # ==================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
 proc updateSql*(queryArg: JsonNode): string =
   var query = queryArg
   var queryString = ""
@@ -162,7 +168,10 @@ proc updateValuesSql*(queryStringArg: string, items:JsonNode): string =
 # ==================================================
 # DELETE
 # ==================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
 proc deleteSql*(): string =
   var queryString = "DELETE"
   return queryString
@@ -171,12 +180,19 @@ proc deleteSql*(): string =
 # ==================================================
 # EXEC
 # ==================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
 proc exec*(sqlStringArg: string, db: proc) =
   echo sqlStringArg
   db().exec(sql sqlStringArg)
   db().close()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
 proc exec*(sqlStringArrayArg: seq, db: proc) =
   for sqlStringArg in sqlStringArrayArg:
     echo sqlStringArg
