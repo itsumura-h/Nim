@@ -1,13 +1,12 @@
-# This is just an example to get you started. Users of your library will
-# import this file by writing ``import allographer/submodule``. Feel free to rename or
-# remove this file altogether. You may create additional modules alongside
-# this file as required.
-
-import json
+import db_sqlite, db_mysql, db_postgres, json
 from strformat import `&`
 from strutils import contains
 
 
+
+# ==================================================
+# SELECT
+# ==================================================
 
 proc selectSql*(queryArg: JsonNode): string =
   var query = queryArg
@@ -45,16 +44,11 @@ proc selectCountSql*(queryArg: JsonNode): string =
   return queryString
 
 
-proc deleteSql*(): string =
-  var queryString = "DELETE"
-  return queryString
-
-
 proc fromSql*(queryStringArg: string, queryArg: JsonNode): string =
   var query = queryArg
   var queryString = queryStringArg
 
-  var table = query["table"].getStr()
+  let table = query["table"].getStr()
   queryString.add(&" FROM {table}")
 
   return queryString
@@ -132,3 +126,59 @@ proc offsetSql*(queryStringArg: string, queryArg: JsonNode): string =
     queryString.add(&" OFFSET {num}")
 
   return queryString
+
+
+# ==================================================
+# UPDATE
+# ==================================================
+
+proc updateSql*(queryArg: JsonNode): string =
+  var query = queryArg
+  var queryString = ""
+
+  queryString.add("UPDATE")
+
+  let table = query["table"].getStr()
+  queryString.add(&" {table} SET")
+
+  return queryString
+
+
+proc updateValuesSql*(queryStringArg: string, items:JsonNode): string =
+  var queryString = queryStringArg
+  var value = ""
+
+  var i = 0
+  for item in items.pairs:
+    if i > 0:
+      value.add(",")
+    i += 1
+    value.add(&" {item.key} = {item.val}")
+
+  queryString.add(value)
+  return queryString
+
+
+# ==================================================
+# DELETE
+# ==================================================
+
+proc deleteSql*(): string =
+  var queryString = "DELETE"
+  return queryString
+
+
+# ==================================================
+# EXEC
+# ==================================================
+
+proc exec*(sqlStringArg: string, db: proc) =
+  echo sqlStringArg
+  db().exec(sql sqlStringArg)
+  db().close()
+
+proc exec*(sqlStringArrayArg: seq, db: proc) =
+  for sqlStringArg in sqlStringArrayArg:
+    echo sqlStringArg
+    db().exec(sql sqlStringArg)
+  db().close()

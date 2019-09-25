@@ -56,7 +56,7 @@ echo table("users").select().where("name", "LIKE", "%20").count(db)
 
 echo ""
 
-table("users").insert(%*{"name": "John", "email": "John@gmail.com"}, db)
+table("users").insert(%*{"name": "John", "email": "John@gmail.com"}).exec(db)
 
 echo ""
 
@@ -64,17 +64,35 @@ table("users").insert(
   [
     %*{"name": "John", "email": "John@gmail.com", "address": "ロンドン"},
     %*{"name": "Paul", "email": "Paul@gmail.com", "address": "ロンドン"},
-    %*{"email": "George@yahoo.co.jp", "birth_date": "1990-1-1", "address": "ロンドン"}
-  ],
-  db
+    %*{"name": "George", "email": "George@gmail.com", "address": "ロンドン"},
+  ]
 )
+.exec(db)
 
 echo ""
 
-echo table("users").where("address", "=", "ロンドン").get(db)
-table("users").where("address", "=", "ロンドン").delete(db)
-echo table("users").where("address", "=", "ロンドン").get(db)
+table("users").insertDifferentColumns(
+  [
+    %*{"name": "John", "email": "John@gmail.com", "address": "ロンドン"},
+    %*{"name": "Paul", "email": "Paul@gmail.com", "address": "ロンドン"},
+    %*{"name": "George", "birth_date": "1960-1-1", "address": "ロンドン"},
+  ]
+)
+.exec(db)
 
-echo ""
+# echo ""
 
-table("users").delete(1, db)
+# echo table("users").where("address", "=", "ロンドン").get(db)
+# table("users").where("address", "=", "ロンドン").delete().exec(db)
+# echo table("users").where("address", "=", "ロンドン").get(db)
+
+# echo ""
+
+# table("users").delete(1).exec(db)
+
+# echo ""
+
+# table("users")
+# .where("name", "LIKE", "user%")
+# .update(%*{"name": "Mick", "address": "NY"})
+# .exec(db)

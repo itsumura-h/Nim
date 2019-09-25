@@ -7,7 +7,8 @@ include
   allographer/delete,
   allographer/aggregate
 
-
+import allographer/sqlBuilder
+export sqlBuilder
 
 proc table*(table: string): JsonNode =
   %*{"table": table}

@@ -16,7 +16,7 @@ class User(Seeder):
             salt = bcrypt.gensalt(rounds=10, prefix=b'2a')
             password = bcrypt.hashpw(f'password{i}'.encode('utf8'), salt)
 
-            data.append(
+            data += [
                 {
                     'name': f'user{i}',
                     'email': f'user{i}@gmail.com',
@@ -28,6 +28,6 @@ class User(Seeder):
                     'created_at': datetime.now(),
                     'updated_at': datetime.now()
                 }
-            )
+            ]
 
         self.db.table('users').insert(data)
