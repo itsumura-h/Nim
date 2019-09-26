@@ -1,13 +1,34 @@
 import json
 
 
-# ==================================================
-# SELECT
-# ==================================================
+proc table*(table: string): JsonNode =
+  ## Specify the table to use
+  ##
+  ## ========================== ==========================
+  ## Nim                        SQL
+  ## ========================== ==========================
+  ## table("users").select()    SELECT * FROM users
+  ## ========================== ==========================
+  ##
+  ## .. code-block:: sql
+  ##   SELECT * FROM {table}
+  ##   INSERT INTO {table}
+  ##   UPDATE {table}
+  ##   DELETE FROM {table}
+  return %*{"table": table}
+
+
+# ============================== SELECT ==============================
 
 proc select*(queryArg: JsonNode, columnsArg: varargs[string]): JsonNode =
-  ## select() => "SELECT *"
-  ## select("id", "name") => "SELECT id, name"
+  ## Specify the columns to get data. If `columnsArg` is empty, get all columns.
+  ## 
+  ## ===================================== =====================================
+  ## Nim                                   SQL
+  ## ===================================== =====================================
+  ## table("users").select()               SELECT * FROM users
+  ## table("users").select("id", "name")   SELECT id, name FROM users
+  ## ===================================== =====================================
   var query = queryArg
 
   if columnsArg.len == 0:
@@ -16,11 +37,9 @@ proc select*(queryArg: JsonNode, columnsArg: varargs[string]): JsonNode =
     query["select"] = %*columnsArg
   
   return query
-  
-  
-# ==================================================
-# Conditions
-# ==================================================
+
+
+# ============================== Conditions ==============================
 
 proc where*(queryArg: JsonNode, column: string, symbol: string, value: string): JsonNode =
   var query = queryArg

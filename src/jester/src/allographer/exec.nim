@@ -63,10 +63,10 @@ proc exec*(sqlStringArg: string, db: proc) =
   db().close()
 
 
-proc exec*(sqlStringArrayArg: seq, db: proc) =
-  for sqlStringArg in sqlStringArrayArg:
-    echo sqlStringArg
-    db().exec(sql sqlStringArg)
+proc exec*(sqlStringArrayArg: openArray[string], db: proc) =
+  for sqlString in sqlStringArrayArg:
+    echo sqlString
+    db().exec(sql sqlString)
   db().close()
 
 

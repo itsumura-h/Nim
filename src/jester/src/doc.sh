@@ -1,0 +1,1 @@
+nim doc --project allographer.nim

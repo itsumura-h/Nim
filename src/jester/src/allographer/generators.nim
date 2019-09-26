@@ -6,6 +6,7 @@ from strutils import contains
 # ==================================================
 # SELECT
 # ==================================================
+
 proc selectSql*(queryArg: JsonNode): string =
   var query = queryArg
   var queryString = ""
@@ -127,8 +128,66 @@ proc offsetSql*(queryStringArg: string, queryArg: JsonNode): string =
 
 
 # ==================================================
+# INSERT
+# ==================================================
+proc insertSql*(queryArg: JsonNode): string =
+  let table = queryArg["table"].getStr()
+  return &"INSERT INTO {table}"
+
+proc insertMultiValuesSql*(queryStringArg: string, rows: openArray[JsonNode]): string =
+  var queryString = queryStringArg
+
+  var columns = ""
+  var rowsCount = 0
+  for key, value in rows[0]:
+    if rowsCount > 0:
+      columns.add(", ")
+    rowsCount += 1
+    columns.add(&"{key}")
+
+  var values = ""
+  var valuesCount = 0
+  for items in rows:
+    var valueCount = 0
+    var value = ""
+    for item in items.pairs:
+      if valueCount > 0:
+        value.add(", ")
+      valueCount += 1
+      value.add(&"{item.val}")
+
+    if valuesCount > 0:
+      values.add(", ")
+    valuesCount += 1
+    values.add(&"({value})")
+
+  queryString.add(&" ({columns}) VALUES {values}")
+  return queryString
+
+
+
+proc insertValuesSqlByJsonNode*(queryStringArg: string, items: JsonNode): string =
+  var queryString = queryStringArg
+  var columns = ""
+  var values = ""
+
+  var i = 0
+  for item in items.pairs:
+    if i > 0:
+      columns.add(", ")
+      values.add(", ")
+    i += 1
+    columns.add(&"{item.key}")
+    values.add(&"{item.val}")
+
+  queryString.add(&" ({columns}) VALUES ({values})")
+  return queryString
+
+
+# ==================================================
 # UPDATE
 # ==================================================
+
 proc updateSql*(queryArg: JsonNode): string =
   var query = queryArg
   var queryString = ""
@@ -159,6 +218,7 @@ proc updateValuesSql*(queryStringArg: string, items:JsonNode): string =
 # ==================================================
 # DELETE
 # ==================================================
+
 proc deleteSql*(): string =
   var queryString = "DELETE"
   return queryString

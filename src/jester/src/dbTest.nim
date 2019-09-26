@@ -109,6 +109,7 @@ echo ""
 
 table("users")
 .where("name", "LIKE", "user%")
+.where("id", ">", 100)
 .update(%*{"name": "Mick", "address": "NY"})
 .exec(db)
 
