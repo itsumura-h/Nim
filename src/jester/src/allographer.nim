@@ -1,11 +1,11 @@
 import json
 
-import allographer/queryBuilder
-import allographer/sqlBuilder
+import allographer/grammars
+import allographer/builders
 import allographer/exec
 
-export queryBuilder
-export sqlBuilder
+export grammars
+export builders
 export exec
 
 

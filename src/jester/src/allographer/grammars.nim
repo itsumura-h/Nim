@@ -6,6 +6,8 @@ import json
 # ==================================================
 
 proc select*(queryArg: JsonNode, columnsArg: varargs[string]): JsonNode =
+  ## select() => "SELECT *"
+  ## select("id", "name") => "SELECT id, name"
   var query = queryArg
 
   if columnsArg.len == 0:

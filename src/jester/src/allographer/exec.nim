@@ -1,6 +1,6 @@
 import db_sqlite, db_mysql, db_postgres, json
-import sqlBuilder
-import sqlGenerator
+import builders
+import generators
 from strformat import `&`
 from strutils import parseInt
 

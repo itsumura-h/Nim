@@ -1,6 +1,6 @@
 import json
 from strformat import `&`
-import sqlGenerator
+import generators
 
 
 # ==================================================

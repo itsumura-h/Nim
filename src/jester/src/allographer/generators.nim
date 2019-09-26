@@ -124,7 +124,7 @@ proc offsetSql*(queryStringArg: string, queryArg: JsonNode): string =
     queryString.add(&" OFFSET {num}")
 
   return queryString
-  
+
 
 # ==================================================
 # UPDATE
