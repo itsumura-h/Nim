@@ -1,4 +1,4 @@
-import allographer, json
+import allographer, json, bcrypt
 include conf/database
 
 
@@ -80,19 +80,36 @@ table("users").insertDifferentColumns(
 )
 .exec(db)
 
-# echo ""
+echo ""
 
-# echo table("users").where("address", "=", "ロンドン").get(db)
-# table("users").where("address", "=", "ロンドン").delete().exec(db)
-# echo table("users").where("address", "=", "ロンドン").get(db)
+echo table("users").where("address", "=", "ロンドン").get(db)
+table("users").where("address", "=", "ロンドン").delete().exec(db)
+echo table("users").where("address", "=", "ロンドン").get(db)
 
-# echo ""
+echo ""
 
-# table("users").delete(1).exec(db)
+table("users").delete(1).exec(db)
+echo table("users").find(1, db)
 
-# echo ""
+var salt = genSalt(10)
+var password = hash("Password1", salt)
+table("users").insert(%*{
+  "id": 1,
+  "name": "user1",
+  "email": "user1@gmail.com",
+  "password": password,
+  "password_salt": salt,
+  "birth_date": "1990-01-01"
+})
+.exec(db)
+echo table("users").find(1, db)
+echo compare(password, "Password1".hash(salt))
 
-# table("users")
-# .where("name", "LIKE", "user%")
-# .update(%*{"name": "Mick", "address": "NY"})
-# .exec(db)
+echo ""
+
+table("users")
+.where("name", "LIKE", "user%")
+.update(%*{"name": "Mick", "address": "NY"})
+.exec(db)
+
+echo table("users").select("name", "email").where("name", "=", "Mick").get(db)

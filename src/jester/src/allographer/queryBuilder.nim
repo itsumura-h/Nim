@@ -1,8 +1,9 @@
-import db_sqlite, db_mysql, db_postgres, json
-from strformat import `&`
-import sqlBuilder
+import json
 
 
+# ==================================================
+# SELECT
+# ==================================================
 
 proc select*(queryArg: JsonNode, columnsArg: varargs[string]): JsonNode =
   var query = queryArg
@@ -13,7 +14,11 @@ proc select*(queryArg: JsonNode, columnsArg: varargs[string]): JsonNode =
     query["select"] = %*columnsArg
   
   return query
-
+  
+  
+# ==================================================
+# Conditions
+# ==================================================
 
 proc where*(queryArg: JsonNode, column: string, symbol: string, value: string): JsonNode =
   var query = queryArg
@@ -137,60 +142,3 @@ proc limit*(queryArg: JsonNode, num: int): JsonNode =
   query["limit"] = %num
   return query
 
-
-# ======================================================================
-# Generate SQL
-# ======================================================================
-
-proc generateSelectSql(queryArg: JsonNode): string =
-  return selectSql(queryArg)
-        .fromSql(queryArg)
-        .joinSql(queryArg)
-        .whereSql(queryArg)
-        .orWhereSql(queryArg)
-        .limitSql(queryArg)
-        .offsetSql(queryArg)
-
-
-proc getSqlCheck*(queryArg: JsonNode) =
-  echo generateSelectSql(queryArg)
-
-
-proc get*(queryArg: JsonNode, db: proc): seq =
-  let queryString = generateSelectSql(queryArg)
-
-  try:
-    echo queryString
-    var queryResult = db().getAllRows(sql queryString)
-    result = queryResult
-  except:
-    result = @[]
-
-  db().close()
-
-
-proc first*(queryArg: JsonNode, db: proc): seq =
-  let queryString = generateSelectSql(queryArg)
-
-  try:
-    echo queryString
-    result = db().getRow(sql queryString)
-  except:
-    result = @[]
-
-  db().close()
-
-
-proc find*(queryArg: JsonNode, id: int, db: proc): seq =
-  var queryString = selectSql(queryArg)
-                    .fromSql(queryArg)
-
-  queryString.add(&" WHERE id = {$id}")
-
-  try:
-    echo queryString
-    result = db().getRow(sql queryString)
-  except:
-    result = @[""]
-  
-  db().close()

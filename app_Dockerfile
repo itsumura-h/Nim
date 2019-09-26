@@ -2,9 +2,9 @@ FROM nimlang/nim:alpine
 
 RUN apk update && \
     apk upgrade --no-cache && \
-    apk add --no-cache libpq ca-certificates openssl sqlite pcre && \
+    apk add --no-cache libpq ca-certificates openssl sqlite pcre bsd-compat-headers && \
     update-ca-certificates
 COPY ./src/jester/jester.nimble /home/www/jester
 RUN git config --global http.sslVerify false && \
-    nimble install -y jester templates
+    nimble install -y jester templates bcrypt
 WORKDIR /home/www

@@ -1,200 +1,144 @@
-import db_sqlite, db_mysql, db_postgres, json
+import json
 from strformat import `&`
-from strutils import contains
-
+import sqlGenerator
 
 
 # ==================================================
 # SELECT
 # ==================================================
-<<<<<<< HEAD
 
-=======
->>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
-proc selectSql*(queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = ""
-
-  queryString.add("SELECT")
-
-  if query.hasKey("select"):
-    for i, item in query["select"].getElems():
-      if i > 0:
-        queryString.add(",")
-
-      queryString.add(&" {item.getStr()}")
-  else:
-    queryString.add(" *")
-
-  return queryString
-
-
-proc selectCountSql*(queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = ""
-
-  queryString.add("SELECT")
-
-  if query.hasKey("select"):
-    for i, item in query["select"].getElems():
-      if i > 0:
-        queryString.add(",")
-
-      queryString.add(&" COUNT({item.getStr()})")
-  else:
-    queryString.add(&" COUNT(*)")
-
-  return queryString
-
-
-proc fromSql*(queryStringArg: string, queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = queryStringArg
-
-  let table = query["table"].getStr()
-  queryString.add(&" FROM {table}")
-
-  return queryString
-
-
-proc joinSql*(queryStringArg: string, queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = queryStringArg
-
-  if query.hasKey("join"):
-    for row in query["join"]:
-      var table = row["table"].getStr()
-      var column1 = row["column1"].getStr()
-      var symbol = row["symbol"].getStr()
-      var column2 = row["column2"].getStr()
-
-      queryString.add(&" JOIN {table} ON {column1} {symbol} {column2}")
-
-  return queryString
-
-
-proc whereSql*(queryStringArg: string, queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = queryStringArg
-
-  if query.hasKey("where"):
-    for i, row in query["where"].getElems():
-      var column = row["column"].getStr()
-      var symbol = row["symbol"].getStr()
-      var value = row["value"]
-      
-      if i == 0:
-        queryString.add(&" WHERE {column} {symbol} {value}")
-      else:
-        queryString.add(&" AND {column} {symbol} {value}")
-
-  return queryString
-
-
-proc orWhereSql*(queryStringArg: string, queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = queryStringArg
-
-  if query.hasKey("or_where"):
-    for row in query["or_where"]:
-      var column = row["column"].getStr()
-      var symbol = row["symbol"].getStr()
-      var value = row["value"]
-      
-      if queryString.contains("WHERE"):
-        queryString.add(&" OR {column} {symbol} {value}")
-      else:
-        queryString.add(&" WHERE {column} {symbol} {value}")
-
-  return queryString
-
-
-proc limitSql*(queryStringArg: string, queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = queryStringArg
-
-  if query.hasKey("limit"):
-    var num = query["limit"].getInt()
-    queryString.add(&" LIMIT {num}")
-
-  return queryString
-
-
-proc offsetSql*(queryStringArg: string, queryArg: JsonNode): string =
-  var query = queryArg
-  var queryString = queryStringArg
-
-  if query.hasKey("offset"):
-    var num = query["offset"].getInt()
-    queryString.add(&" OFFSET {num}")
-
-  return queryString
+proc buildSelectSql*(queryArg: JsonNode): string =
+  return selectSql(queryArg)
+        .fromSql(queryArg)
+        .joinSql(queryArg)
+        .whereSql(queryArg)
+        .orWhereSql(queryArg)
+        .limitSql(queryArg)
+        .offsetSql(queryArg)
 
 
 # ==================================================
-# UPDATE
+# INSERT
 # ==================================================
-<<<<<<< HEAD
 
-=======
->>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
-proc updateSql*(queryArg: JsonNode): string =
+proc insert*(queryArg: JsonNode, items: JsonNode): string =
   var query = queryArg
   var queryString = ""
-
-  queryString.add("UPDATE")
-
   let table = query["table"].getStr()
-  queryString.add(&" {table} SET")
-
-  return queryString
-
-
-proc updateValuesSql*(queryStringArg: string, items:JsonNode): string =
-  var queryString = queryStringArg
-  var value = ""
+  var columns = ""
+  var values = ""
 
   var i = 0
   for item in items.pairs:
     if i > 0:
-      value.add(",")
+      columns.add(", ")
+      values.add(", ")
     i += 1
-    value.add(&" {item.key} = {item.val}")
+    columns.add(&"{item.key}")
+    values.add(&"{item.val}")
 
-  queryString.add(value)
+  queryString.add(&"INSERT INTO {table} ({columns}) VALUES ({values})")
   return queryString
+
+
+proc insert*(queryArg: JsonNode, rows: openArray[JsonNode]): string =
+  let table = queryArg["table"].getStr()
+
+  var columns = ""
+  var rowsCount = 0
+  for key, value in rows[0]:
+    if rowsCount > 0:
+      columns.add(", ")
+    rowsCount += 1
+    columns.add(&"{key}")
+
+  var values = ""
+  var valuesCount = 0
+  for items in rows:
+    var valueCount = 0
+    var value = ""
+    for item in items.pairs:
+      if valueCount > 0:
+        value.add(", ")
+      valueCount += 1
+      value.add(&"{item.val}")
+
+    if valuesCount > 0:
+      values.add(", ")
+    valuesCount += 1
+    values.add(&"({value})")
+
+  return &"INSERT INTO {table} ({columns}) VALUES {values}"
+
+
+proc insertDifferentColumns*(queryArg: JsonNode, rows: openArray[JsonNode]): seq =
+  let table = queryArg["table"].getStr()
+  var sqls = @[""]
+
+  for items in rows:
+    var queryString = ""
+    var columns = ""
+    var values = ""
+
+    var itemCount = 0
+    for item in items.pairs:
+      if itemCount > 0:
+        columns.add(", ")
+        values.add(", ")
+      itemCount += 1
+      columns.add(&"{item.key}")
+      values.add(&"{item.val}")
+
+    queryString.add(&"INSERT INTO {table} ({columns}) VALUES ({values})")
+    sqls.add(queryString)
+
+  sqls.delete(0)
+  return sqls
+# ==================================================
+# UPDATE
+# ==================================================
+
+proc update*(queryArg: JsonNode, items: JsonNode): string =
+  return updateSql(queryArg)
+        .updateValuesSql(items)
+        .joinSql(queryArg)
+        .whereSql(queryArg)
+        .orWhereSql(queryArg)
+        .limitSql(queryArg)
+        .offsetSql(queryArg)
 
 
 # ==================================================
 # DELETE
 # ==================================================
-<<<<<<< HEAD
 
-=======
->>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
-proc deleteSql*(): string =
-  var queryString = "DELETE"
+proc delete*(queryArg: JsonNode): string =
+  return deleteSql()
+        .fromSql(queryArg)
+        .joinSql(queryArg)
+        .whereSql(queryArg)
+        .orWhereSql(queryArg)
+        .limitSql(queryArg)
+        .offsetSql(queryArg)
+
+
+proc delete*(queryArg: JsonNode, id: int): string =
+  var queryString = deleteSql()
+                    .fromSql(queryArg)
+
+  queryString.add(&" WHERE id = {id}")
   return queryString
 
 
 # ==================================================
-# EXEC
+# Aggregate
 # ==================================================
-<<<<<<< HEAD
 
-=======
->>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
-proc exec*(sqlStringArg: string, db: proc) =
-  echo sqlStringArg
-  db().exec(sql sqlStringArg)
-  db().close()
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 673a9c1980b2ed8a7bda30636a13e93bc84a783e
-proc exec*(sqlStringArrayArg: seq, db: proc) =
-  for sqlStringArg in sqlStringArrayArg:
-    echo sqlStringArg
-    db().exec(sql sqlStringArg)
-  db().close()
+proc generateCountSql*(queryArg: JsonNode): string =
+  return selectCountSql(queryArg)
+          .fromSql(queryArg)
+          .joinSql(queryArg)
+          .whereSql(queryArg)
+          .orWhereSql(queryArg)
+          .limitSql(queryArg)
+          .offsetSql(queryArg)
