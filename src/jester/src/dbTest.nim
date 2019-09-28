@@ -1,6 +1,7 @@
-import allographer, json, bcrypt
+import json, bcrypt
 include conf/database
-
+import allographerEdge/allographer
+# import allographer
 
 var result = table("users").select("id", "email", "name").offset(10).limit(5).get(db)
 echo result
