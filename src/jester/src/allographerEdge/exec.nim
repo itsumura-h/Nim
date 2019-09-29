@@ -2,7 +2,7 @@ import db_sqlite, db_mysql, db_postgres, json
 import builders
 import generators
 from strformat import `&`
-from strutils import parseInt
+from strutils import parseInt, contains
 
 
 # ==================================================
@@ -61,7 +61,6 @@ proc exec*(sqlStringArg: string, db: proc) =
   echo sqlStringArg
   db().exec(sql sqlStringArg)
   db().close()
-
 
 proc exec*(sqlStringArrayArg: openArray[string], db: proc) =
   for sqlString in sqlStringArrayArg:

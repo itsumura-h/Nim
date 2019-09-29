@@ -59,6 +59,7 @@ echo ""
 
 table("users").insert(%*{"name": "John", "email": "John@gmail.com"}).exec(db)
 
+
 echo ""
 
 table("users").insert(
