@@ -1,12 +1,12 @@
+import ../allographerNew/allographer
 import db_sqlite
 
-proc db*(): DbConn =
+proc conn*(this: DBObject): DbConn =
     let conn = open("/home/db/db.sqlite3", "", "", "")
     return conn
 
-# from db_postgres import open, DbConn
+export DBObject, allographer
 
-# proc db*(): DbConn =
-#     let conn = open("rdb:5432","user","password","nim_sample")
-#     return conn
-    
+# import db_sqlite
+# let conn = open("/home/db/db.sqlite3", "", "", "")
+# export conn

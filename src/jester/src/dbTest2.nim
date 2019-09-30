@@ -1,4 +1,6 @@
+# import allographerNew/base
 import conf/database
-import allographerNew/DB
+import json
 
-var db = DB(db)
+var db = DBObject().table("users").get()
+echo repr db
