@@ -1,4 +1,4 @@
-import ../busker
+import ../../busker/busker
 
 proc corsHeader*(request: Request): seq =
     var headers = @[

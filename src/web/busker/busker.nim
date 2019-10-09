@@ -16,14 +16,14 @@ template jsonResponse*(response: JsonNode, headersArg: openArray[tuple[key, valu
     let e = getCurrentExceptionMsg()
     resp Http500, headers, e
 
-template stringResponse*(response: string) =
+template HTTPResponse*(response: string) =
   try:
     resp response
   except:
     let e = getCurrentExceptionMsg()
     resp Http500, e
 
-template stringResponse*(response: string, headers: openArray[tuple[key, value: string]]) =
+template HTTPResponse*(response: string, headers: openArray[tuple[key, value: string]]) =
   try:
     resp Http200, headers, response
   except:

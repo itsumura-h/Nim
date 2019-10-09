@@ -1,14 +1,10 @@
 import json
-import db_sqlite
-
-from ../conf/database import db
+import allographer
 
 type ManageUsersRepository* = ref object of RootObj
 
 proc index*(this: ManageUsersRepository): JsonNode =
-  let users = db().getAllRows(
-    sql"select * from users"
-  )
+  let users = RDB().table("users").get(db)
   var usersJson = %[]
   for user in users:
     usersJson.add(%*{
@@ -25,10 +21,7 @@ proc index*(this: ManageUsersRepository): JsonNode =
 
 
 proc show*(this: ManageUsersRepository, id: int): JsonNode =
-  let user = db().getRow(
-    sql"select * from users where id = ?",
-    id
-  )
+  let user = RDB().table("users").find(id, db)
   return %*{
     "id": user[0],
     "name": user[1],
