@@ -2,15 +2,16 @@ import asyncdispatch, httpcore, strutils, re, json, sugar, tables
 import ../busker/busker
 from config/middlewares import middleware
 from config/customHeaders import corsHeader
-from controllers/ToppageController import ToppageController
-from controllers/SampleController import SampleController
-from controllers/ManageUsersController import ManageUsersController
+import controllers/ToppageController
+import controllers/SampleController
+import controllers/ManageUsersController
+
 
 router toppage:
   get "react/":
-    HTTPResponse(ToppageController.react())
+    HTTPResponse(ToppageController().react())
   get "vue/":
-    HTTPResponse(ToppageController.vue())
+    HTTPResponse(ToppageController().vue())
 
 router manageUsers:
   get "":
@@ -37,7 +38,7 @@ routes:
   
   # Toppage
   get "/":
-    HTTPResponse(ToppageController.index())
+    HTTPResponse(ToppageController().index())
   extend toppage, "/toppage/"
 
   # Sample

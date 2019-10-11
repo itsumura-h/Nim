@@ -12,5 +12,4 @@ proc index*(): string =
 
 proc fib*(num: string): JsonNode =
   let new_num = num.parseInt
-  let data = SampleService().fib(new_num)
-  return data
+  return SampleService().fib(new_num)

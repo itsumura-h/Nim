@@ -16,4 +16,5 @@ proc fib*(this: SampleService, num: int): JsonNode =
     "time": &"{end_time.inSeconds}.{end_time.inMicroseconds}",
     "fib": results
   }
+  # echo repr end_time
   return data

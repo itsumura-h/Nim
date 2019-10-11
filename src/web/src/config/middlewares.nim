@@ -1,5 +1,5 @@
 import ../../busker/busker
-import customHeaders
+
 
 template checkLogin(request: Request) =
   try:
