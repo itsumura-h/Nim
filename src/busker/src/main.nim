@@ -9,43 +9,46 @@ import controllers/ManageUsersController
 
 router toppage:
   get "react/":
-    HTTPResponse(ToppageController().react())
+    response(ToppageController().react())
   get "vue/":
-    HTTPResponse(ToppageController().vue())
+    response(ToppageController().vue())
 
 router manageUsers:
   get "":
-    HTTPResponse(ManageUsersController.index())
+    response(ManageUsersController.index())
   get "create/":
-    HTTPResponse(ManageUsersController.create())
+    response(ManageUsersController.create())
   post "":
-    HTTPResponse(ManageUsersController.store(request))
+    response(ManageUsersController.store(request))
   get "@id/":
-    HTTPResponse(ManageUsersController.show(@"id"))
+    response(ManageUsersController.show(@"id"))
   put "@id/":
-    jsonResponse(ManageUsersController.update(@"id"))
+    response(ManageUsersController.update(@"id"))
 
 router sample:
   get "":
-    middleware(request); HTTPResponse(SampleController.index(), corsHeader(request))
+    response(SampleController.index(), corsHeader(request))
   get "fib/@num/":
-    middleware(request); jsonResponse(SampleController.fib(@"num"), corsHeader(request))
+    response(SampleController.fib(@"num"), corsHeader(request))
 
 
 routes:
   options re".*":
-    HTTPResponse("", corsHeader(request))
+    response("", corsHeader(request))
   
   # Toppage
   get "/":
-    HTTPResponse(ToppageController().index())
+    response(ToppageController().index())
   extend toppage, "/toppage/"
 
   # Sample
+  before re"/sample/.*":
+    middleware(request)
   extend sample, "/sample/"
   
   # ManageUsers
   extend manageUsers, "/ManageUsers/"
+
 
 
 
